@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchCollection } from '../api'
+import { collectionFromResponse, getApiUrl } from '../api'
 
 function Users() {
   const [users, setUsers] = useState([])
@@ -7,7 +7,7 @@ function Users() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchCollection('users', controller.signal).then(setUsers).catch((loadError) => {
+    fetch(getApiUrl('users'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setUsers(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

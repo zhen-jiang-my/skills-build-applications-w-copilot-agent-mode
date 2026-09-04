@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchCollection } from '../api'
+import { collectionFromResponse, getApiUrl } from '../api'
 
 function Teams() {
   const [teams, setTeams] = useState([])
@@ -7,7 +7,7 @@ function Teams() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchCollection('teams', controller.signal).then(setTeams).catch((loadError) => {
+    fetch(getApiUrl('teams'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setTeams(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

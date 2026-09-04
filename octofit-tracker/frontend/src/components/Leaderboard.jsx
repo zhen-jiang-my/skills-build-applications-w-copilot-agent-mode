@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchCollection } from '../api'
+import { collectionFromResponse, getApiUrl } from '../api'
 
 function Leaderboard() {
   const [leaders, setLeaders] = useState([])
@@ -7,7 +7,7 @@ function Leaderboard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchCollection('leaderboard', controller.signal).then(setLeaders).catch((loadError) => {
+    fetch(getApiUrl('leaderboard'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setLeaders(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchCollection } from '../api'
+import { collectionFromResponse, getApiUrl } from '../api'
 
 function Workouts() {
   const [workouts, setWorkouts] = useState([])
@@ -7,7 +7,7 @@ function Workouts() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchCollection('workouts', controller.signal).then(setWorkouts).catch((loadError) => {
+    fetch(getApiUrl('workouts'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setWorkouts(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()
