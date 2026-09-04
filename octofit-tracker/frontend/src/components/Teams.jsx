@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { collectionFromResponse, getApiUrl } from '../api'
+import { collectionFromResponse } from '../api'
+
+const teamsApiUrl = import.meta.env.VITE_CODESPACE_NAME?.trim()
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/teams/`
+  : 'http://localhost:8000/api/teams/'
 
 function Teams() {
   const [teams, setTeams] = useState([])
@@ -7,7 +11,7 @@ function Teams() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(getApiUrl('teams'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setTeams(collectionFromResponse(payload))).catch((loadError) => {
+    fetch(teamsApiUrl, { signal: controller.signal }).then((response) => response.json()).then((payload) => setTeams(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

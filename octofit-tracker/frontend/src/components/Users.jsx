@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { collectionFromResponse, getApiUrl } from '../api'
+import { collectionFromResponse } from '../api'
+
+const usersApiUrl = import.meta.env.VITE_CODESPACE_NAME?.trim()
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/users/`
+  : 'http://localhost:8000/api/users/'
 
 function Users() {
   const [users, setUsers] = useState([])
@@ -7,7 +11,7 @@ function Users() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(getApiUrl('users'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setUsers(collectionFromResponse(payload))).catch((loadError) => {
+    fetch(usersApiUrl, { signal: controller.signal }).then((response) => response.json()).then((payload) => setUsers(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

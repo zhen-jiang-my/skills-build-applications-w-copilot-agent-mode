@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { collectionFromResponse, getApiUrl } from '../api'
+import { collectionFromResponse } from '../api'
+
+const activitiesApiUrl = import.meta.env.VITE_CODESPACE_NAME?.trim()
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/activities/`
+  : 'http://localhost:8000/api/activities/'
 
 function Activities() {
   const [activities, setActivities] = useState([])
@@ -7,7 +11,7 @@ function Activities() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(getApiUrl('activities'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setActivities(collectionFromResponse(payload))).catch((loadError) => {
+    fetch(activitiesApiUrl, { signal: controller.signal }).then((response) => response.json()).then((payload) => setActivities(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()

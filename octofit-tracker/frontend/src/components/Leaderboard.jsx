@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { collectionFromResponse, getApiUrl } from '../api'
+import { collectionFromResponse } from '../api'
+
+const leaderboardApiUrl = import.meta.env.VITE_CODESPACE_NAME?.trim()
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/leaderboard/`
+  : 'http://localhost:8000/api/leaderboard/'
 
 function Leaderboard() {
   const [leaders, setLeaders] = useState([])
@@ -7,7 +11,7 @@ function Leaderboard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(getApiUrl('leaderboard'), { signal: controller.signal }).then((response) => response.json()).then((payload) => setLeaders(collectionFromResponse(payload))).catch((loadError) => {
+    fetch(leaderboardApiUrl, { signal: controller.signal }).then((response) => response.json()).then((payload) => setLeaders(collectionFromResponse(payload))).catch((loadError) => {
       if (loadError.name !== 'AbortError') setError(loadError.message)
     })
     return () => controller.abort()
